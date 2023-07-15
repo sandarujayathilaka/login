@@ -10,7 +10,7 @@ import Missing from "./components/Missing";
 import Unauthorized from "./components/Unauthorized";
 import RequireAuth from "./components/RequireAuth";
 import PersistLogin from "./components/PersistLogin";
-import { Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import AdminPortal from "./components/portal/AdminPortal";
 import AdminEmployee from "./components/Employee/AdminEmployee";
 import AdminDepartment from "./components/Department/AdminDepartment";
@@ -54,92 +54,111 @@ const ROLES = {
 function App() {
   return (
     <>
-      <Routes>
-        {/* <Route path="/" element={<Layout />}> */}
-        {/* public routes */}
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="unauthorized" element={<Unauthorized />} />
+      <Router>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/unauthorized" element={<Unauthorized />} />
 
-        {/* we want to protect these routes */}
-        <Route element={<PersistLogin />}>
-          <Route
-            element={
-              <RequireAuth allowedRoles={[ROLES.Divisional_Secretariat]} />
-            }
-          >
-            <Route path="ag" element={<AgPortal />}>
-              <Route path="dashboard" element={<AgDashboard />} />
-              <Route path="departments" element={<AgDepartment />} />
-              <Route path="allemployee/:id" element={<AllEmployee />} />
-              <Route path="employeetask/:id" element={<EmployeeTask />} />
-              <Route path="updatepass/:eid" element={<UpdatePassword />} />
+          {/* Protected routes */}
+          <Route element={<PersistLogin />}>
+            <Route
+              element={
+                <RequireAuth allowedRoles={[ROLES.Divisional_Secretariat]} />
+              }
+            >
+              <Route path="/ag" element={<AgPortal />}>
+                <Route path="/dashboard" element={<AgDashboard />} />
+                <Route path="/departments" element={<AgDepartment />} />
+                <Route path="/allemployee/:id" element={<AllEmployee />} />
+                <Route path="/employeetask/:id" element={<EmployeeTask />} />
+                <Route path="/updatepass/:eid" element={<UpdatePassword />} />
+              </Route>
             </Route>
-          </Route>
 
-          <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
-            <Route path="admin" element={<AdminPortal />}>
-              <Route path="addEmp" element={<AdminEmployee />} />
-              <Route path="addDep" element={<AdminDepartment />} />
-              <Route path="getEmp" element={<AllEmployees />} />
-              <Route path="getDep" element={<AllDepartment />} />
-              <Route path="updateDep/:id" element={<EditDepartment />} />
-              <Route path="addSub/:id" element={<AddSubject />} />
-              <Route path="show/:id" element={<DisplaySubject />} />
+            <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+              <Route path="/admin" element={<AdminPortal />}>
+                <Route path="/addEmp" element={<AdminEmployee />} />
+                <Route path="/addDep" element={<AdminDepartment />} />
+                <Route path="/getEmp" element={<AllEmployees />} />
+                <Route path="/getDep" element={<AllDepartment />} />
+                <Route path="/updateDep/:id" element={<EditDepartment />} />
+                <Route path="/addSub/:id" element={<AddSubject />} />
+                <Route path="/show/:id" element={<DisplaySubject />} />
+                <Route
+                  path="/updateSub/:index/:id/:status"
+                  element={<UpdateSubject />}
+                />
+                <Route path="/addSubject" element={<AddSubjectTask />} />
+                <Route path="/getSubject" element={<AllSubject />} />
+                <Route path="/showSub/:id" element={<DisplaySubjectTask />} />
+                <Route path="/updateSubject/:id" element={<EditSubject />} />
+                <Route
+                  path="/updateTask/:index/:id/:status"
+                  element={<EditSub />}
+                />
+                <Route path="/updatepass/:eid" element={<UpdatePassword />} />
+              </Route>
+            </Route>
+
+            <Route element={<RequireAuth allowedRoles={[ROLES.Employee]} />}>
+              <Route path="/employee" element={<EmployeePortal />} />
+              <Route path="/employee/employeeform" element={<Employee />} />
               <Route
-                path="updateSub/:index/:id/:status"
-                element={<UpdateSubject />}
+                path="/employee/employeetasks"
+                element={<EmployeeTasks />}
               />
-              <Route path="addSubject" element={<AddSubjectTask />} />
-              <Route path="getSubject" element={<AllSubject />} />
-              <Route path="showSub/:id" element={<DisplaySubjectTask />} />
-              <Route path="updateSubject/:id" element={<EditSubject />} />
+              <Route path="/employee/pendingtasks" element={<PendingTasks />} />
               <Route
-                path="updateTask/:index/:id/:status"
-                element={<EditSub />}
+                path="/employee/diaplaypending/:id"
+                element={<DisplayPending />}
               />
-              <Route path="updatepass/:eid" element={<UpdatePassword />} />
-            </Route>
-          </Route>
-
-          <Route element={<RequireAuth allowedRoles={[ROLES.Employee]} />}>
-            <Route path="employee" element={<EmployeePortal />}>
-              <Route path="employeeform" element={<Employee />} />
-              <Route path="employeetasks" element={<EmployeeTasks />} />
-              <Route path="pendingtasks" element={<PendingTasks />} />
-              <Route path="diaplaypending/:id" element={<DisplayPending />} />
-              <Route path="updatepen/:id" element={<UpdatePending />} />
-              <Route path="submitreport" element={<ReportSubmit />} />
-              <Route path="updatepass/:eid" element={<UpdatePassword />} />
-            </Route>
-          </Route>
-
-          <Route
-            element={
-              <RequireAuth
-                allowedRoles={[
-                  ROLES.Assistant_Director,
-                  ROLES.Assistant_District_Registar,
-                  ROLES.Cheif_Clerk,
-                  ROLES.Accountant,
-                  ROLES.Administrative_Officer,
-                ]}
+              <Route
+                path="/employee/updatepen/:id"
+                element={<UpdatePending />}
               />
-            }
-          >
-            <Route path="common" element={<CommonPortal />}>
-              <Route path="role" element={<CommonDashboard />} />
-              <Route path="allemployee/:id" element={<HeadEmployee />} />
-              <Route path="employeetask/:id" element={<HeadEmpTask />} />
-              <Route path="updatepass/:eid" element={<UpdatePassword />} />
+              <Route path="/employee/submitreport" element={<ReportSubmit />} />
+              <Route
+                path="/employee/updatepass/:eid"
+                element={<UpdatePassword />}
+              />
             </Route>
-          </Route>
-        </Route>
 
-        {/* catch all */}
-        <Route path="*" element={<Missing />} />
-        {/* </Route> */}
-      </Routes>
+            <Route
+              element={
+                <RequireAuth
+                  allowedRoles={[
+                    ROLES.Assistant_Director,
+                    ROLES.Assistant_District_Registar,
+                    ROLES.Cheif_Clerk,
+                    ROLES.Accountant,
+                    ROLES.Administrative_Officer,
+                  ]}
+                />
+              }
+            >
+              <Route path="/common" element={<CommonPortal />} />
+              <Route path="/common/role" element={<CommonDashboard />} />
+              <Route
+                path="/common/allemployee/:id"
+                element={<HeadEmployee />}
+              />
+              <Route
+                path="/common/employeetask/:id"
+                element={<HeadEmpTask />}
+              />
+              <Route
+                path="/common/updatepass/:eid"
+                element={<UpdatePassword />}
+              />
+            </Route>
+
+            {/* Catch all */}
+            <Route path="/*" element={<Missing />} />
+          </Route>
+        </Routes>
+      </Router>
 
       <ToastContainer />
     </>
